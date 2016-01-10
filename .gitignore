@@ -9,10 +9,8 @@ Temp
 *.pidb
 *.userprefs
 
-Library/cache/*
-Library/metadata/*
-Library/previews/*
-Library/ScriptAssemblies/*
+Library/*
+Temp/*
 
 AnnotationManager
 assetDatabase3
