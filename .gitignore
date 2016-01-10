@@ -1,47 +1,35 @@
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
+obj
+Temp
+*.tmproj
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.pidb
+*.userprefs
 
-# Folder config file
-Desktop.ini
+Library/cache/*
+Library/metadata/*
+Library/previews/*
+Library/ScriptAssemblies/*
 
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Windows Installer files
-*.cab
-*.msi
-*.msm
-*.msp
-
-# Windows shortcuts
-*.lnk
-
-# =========================
-# Operating System Files
-# =========================
-
-# OSX
-# =========================
-
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Thumbnails
-._*
-
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
+AnnotationManager
+assetDatabase3
+AssetImportState
+assetservercachev3
+AssetServerCacheV3
+AssetVersioning.db
+AudioManager.asset
+BuildPlayer.prefs
+BuildSettings.asset
+DynamicsManager.asset
+EditorSettings.asset
+EditorUserBuildSettings.asset
+expandedItems
+FailedAssetImports.txt
+guidmapper
+InspectorExpandedItems.asset
+MonoManager.asset
+NetworkManager.asset
+ScriptMapper
