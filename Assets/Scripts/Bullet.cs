@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Bullet : MonoBehaviour {
 
-    [SerializeField] private GameObject impactParticlesPrefab;
+    public GameObject impactParticlesPrefab;
 
     //todo: particles on death
 
@@ -31,7 +31,7 @@ public class Bullet : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag("Enemy"))
+        if (other.gameObject.tag.Contains("Enemy"))
         {
             GameObject impactParticles = Instantiate(impactParticlesPrefab, other.transform.position, Quaternion.identity) as GameObject;
             Destroy(impactParticles, 1f);

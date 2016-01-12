@@ -3,8 +3,8 @@ using System.Collections;
 
 public class SpawnPoint : MonoBehaviour {
 
-    [SerializeField] private GameObject enemyToSpawnPrefab;     // turn into array of enemies?
-    [SerializeField] private float waveTime;
+    public GameObject enemyToSpawnPrefab;     // turn into array of enemies?
+    public float waveTime;
 
     private float timeSinceLastSpawn;
 

@@ -5,7 +5,7 @@ public class Main_Cam : MonoBehaviour {
 
     //buggy lerp
 
-    [SerializeField] private float lerpTime;
+    public float lerpTime;
 
     private GameObject player;
     private float zCoord;

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 /*
     finished:
@@ -31,17 +32,17 @@ using System.Collections;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float maxHMoveSpeed;
-    [SerializeField] private float jumpForce;
-    [SerializeField] private int maxJumps;
-    [SerializeField] private LayerMask GroundLayerMask;
-    [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private float bulletSpeed;
+    public float maxHMoveSpeed;
+    public float jumpForce;
+    public int maxJumps;
+    public LayerMask GroundLayerMask;
+    public GameObject bulletPrefab;
+    public float bulletSpeed;
 
-    [SerializeField] private int startingHealth;
-    [SerializeField] private int startingDamage;
-    public int health { get; set; }
-    public int damage { get; set; }
+    public int startingHealth;
+    public int startingBulletDamage;
+    public int health { get; private set; }
+    public int bulletDamage { get; private set; }
 
     private float groundCheckRadius = 0.2f;
 
@@ -73,8 +74,8 @@ public class Player : MonoBehaviour
         jumpCount = 0;
         bulletLifeTime = 3;
 
-        health = 10;
-        damage = 5;
+        health = startingHealth;
+        bulletDamage = startingBulletDamage;
 
         Physics2D.IgnoreCollision(gameObject.GetComponent<Collider2D>(), bulletPrefab.GetComponent<Collider2D>());
     }
@@ -206,5 +207,11 @@ public class Player : MonoBehaviour
         }
     }
 
-    
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag.Contains("Enemy"))
+        {                                                   
+            
+        }
+    }
 }

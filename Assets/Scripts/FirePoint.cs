@@ -3,9 +3,9 @@ using System.Collections;
 
 public class FirePoint : MonoBehaviour {
 
-    [SerializeField] private float horizontalSpeed;
-    [SerializeField] private float amplitude;
-    [SerializeField] private float lerpTime;
+    public float horizontalSpeed;
+    public float amplitude;
+    public float lerpTime;
 
     private Vector3 tempPosition;
     private GameObject player;
