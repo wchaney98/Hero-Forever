@@ -4,6 +4,8 @@ using System;
 
 public class TopAirSpawner : Spawner
 {
+    // "TopAir" enemy spawner
+
     public override void spawnEnemies()
     {
         Debug.Log("TopAirSpawner");

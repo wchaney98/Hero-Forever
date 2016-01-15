@@ -4,7 +4,9 @@ using System.Collections.Generic;
 
 public abstract class Spawner : MonoBehaviour
 {
-    public float waveTime;
+    // Abstract class to serve as an outline for all enemy spawners
+
+    public float spawnChancePerWave;
     [SerializeField]
     public GameObject[] enemies;
 
