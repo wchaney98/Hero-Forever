@@ -9,6 +9,7 @@ public class TopAirSpawner : Spawner
     public override void spawnEnemies()
     {
         Debug.Log("TopAirSpawner");
+        //base.spawnEnemies();
     }
 
     void Start()

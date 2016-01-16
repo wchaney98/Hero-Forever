@@ -9,6 +9,7 @@ public class GroundSpawner : Spawner
     public override void spawnEnemies()
     {
         Debug.Log("GroundSpawner");
+        base.spawnEnemies();
     }
 
     void Start()

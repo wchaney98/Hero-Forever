@@ -9,6 +9,7 @@ public class BotAirSpawner : Spawner
     public override void spawnEnemies()
     {
         Debug.Log("BotAirSpawner");
+        //base.spawnEnemies();
     }
 
     void Start ()

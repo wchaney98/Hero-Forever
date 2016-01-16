@@ -10,5 +10,11 @@ public abstract class Spawner : MonoBehaviour
     [SerializeField]
     public GameObject[] enemies;
 
-    public abstract void spawnEnemies();
+    public virtual void spawnEnemies()
+    {
+        if (enemies != null)
+        {
+            Instantiate(enemies[UnityEngine.Random.Range(0, enemies.Length - 1)], transform.position, Quaternion.identity);
+        }
+    }
 }

@@ -8,12 +8,8 @@ public class MidAirSpawner : Spawner
 
     public override void spawnEnemies()
     {
-        Debug.Log("MidAirSpawner");
-
-        if (enemies != null)
-        {
-            Instantiate(enemies[UnityEngine.Random.Range(0, enemies.Length - 1)], transform.position, Quaternion.identity);
-        }
+        Debug.Log("MidAirSpawn");
+        base.spawnEnemies();
     }
 
     void Start()
