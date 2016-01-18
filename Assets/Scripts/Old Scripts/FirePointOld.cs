@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FirePoint : MonoBehaviour {
+public class FirePointOld : MonoBehaviour {
 
     public float horizontalSpeed;
     public float amplitude;

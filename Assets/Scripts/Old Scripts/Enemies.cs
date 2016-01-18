@@ -14,7 +14,7 @@ public abstract class Enemies : MonoBehaviour
     public float moveSpeed { get; private set; }
 
     public GameObject player_obj;
-    public Player player_s;
+    public PlayerOld player_s;
     public Transform player_t;
     public Rigidbody2D RB2D;
 
@@ -25,7 +25,7 @@ public abstract class Enemies : MonoBehaviour
         damage = startingDamage;
         moveSpeed = startingMoveSpeed;
         player_obj = GameObject.Find("Player");
-        player_s = player_obj.GetComponent<Player>();
+        player_s = player_obj.GetComponent<PlayerOld>();
         player_t = player_obj.transform;
     }
 

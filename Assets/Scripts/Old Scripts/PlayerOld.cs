@@ -30,7 +30,7 @@ using System;
         rpg elements
 */
 
-public class Player : MonoBehaviour
+public class PlayerOld : MonoBehaviour
 {
     public float maxHMoveSpeed;
     public float jumpForce;
