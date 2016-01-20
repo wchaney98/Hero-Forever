@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class Player : MonoBehaviour, IDoesShoot
+public class PlayerShoot : MonoBehaviour, IDoesShoot
 {
 
     public GameObject bulletPrefab;
@@ -10,13 +10,9 @@ public class Player : MonoBehaviour, IDoesShoot
 
     Transform firePoint;
 
-    bool didShoot;
-
     void Start ()
     {
         firePoint = GameObject.Find("FirePoint").transform;
-
-        didShoot = false;
 	}
 
     void Update ()
@@ -24,23 +20,32 @@ public class Player : MonoBehaviour, IDoesShoot
         HandleShootInput();
     }
 
-    //overcomplicated
-    bool ShootPressed()
-    {
-        if (Input.GetMouseButtonDown(1) && !didShoot)
-            return true;
-        return false;
-    }
-
+    /// <summary>
+    /// Void method which gets and processes mouse input
+    /// </summary>
     void HandleShootInput()
     {
         if (ShootPressed())
         {
             Shoot();
-            didShoot = true;
         }
     }
 
+    /// <summary>
+    /// Boolean method which returns whether or not the right mouse button was pressed
+    /// </summary>
+    /// <returns>Returns whether or not the right mouse button was pressed</returns>
+    bool ShootPressed()
+    {
+        if (Input.GetMouseButtonDown(1))
+            return true;
+        return false;
+    }
+
+    /// <summary>
+    /// Void method which takes the current mouse position in world-space and shoots a player bullet in that direction with
+    /// a player defined "bulletVelocity"
+    /// </summary>
     public void Shoot()
     {
         Vector2 cursorInWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);

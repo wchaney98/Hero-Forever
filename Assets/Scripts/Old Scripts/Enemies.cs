@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
-public abstract class Enemies : MonoBehaviour
+public abstract class Enemies : MonoBehaviour, IDamageable
 {
     //remove abstract class?
 
@@ -53,4 +54,8 @@ public abstract class Enemies : MonoBehaviour
         }
     }
 
+    public void TakeDamage(float damage)
+    {
+        health -= (int)damage;
+    }
 }
