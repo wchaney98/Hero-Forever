@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 
+[RequireComponent (typeof (BoxCollider2D))]
 public abstract class Enemy : MonoBehaviour, IDamageable
 {
     // Abstract class to serve as an outline for all enemies
