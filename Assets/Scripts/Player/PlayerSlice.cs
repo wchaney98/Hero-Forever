@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Lean;
 using System;
 using System.Collections;
 
@@ -9,21 +10,23 @@ public class PlayerSlice : MonoBehaviour
     public float maxSlashTime;
     public float slashDelay;
     public float slashDamage;
+    public float slashSize;
 
-    Lean.LeanFinger currFinger;
+    LeanFinger currFinger;
 
     GameObject lineGameObject;
     LineRenderer lineRenderer;
     int i;
     float timeSinceLastSlash;
     bool slashing;
-
-
+    bool soloDragging;
 
     void Start()
     {
-        Lean.LeanTouch.OnFingerDown += OnFingerDown;
-        Lean.LeanTouch.OnFingerUp += OnFingerUp;
+        LeanTouch.OnFingerDown += OnFingerDown;
+        LeanTouch.OnFingerUp += OnFingerUp;
+        LeanTouch.OnSoloDrag += OnSoloDrag;
+        LeanTouch.OnMultiDrag += OnMultiDrag;
         currFinger = null;
 
         lineGameObject = new GameObject("Line");
@@ -38,19 +41,30 @@ public class PlayerSlice : MonoBehaviour
         i = 0;
         timeSinceLastSlash = 0;
         slashing = false;
+        soloDragging = false;
     }
 
-    public void OnFingerDown(Lean.LeanFinger finger)
+    void OnFingerDown(LeanFinger finger)
     {
         currFinger = finger;
     }
 
-    public void OnFingerUp(Lean.LeanFinger finger)
+    void OnFingerUp(LeanFinger finger)
     {
         if (finger == currFinger)
         {
             currFinger = null;
         }
+    }
+
+    void OnSoloDrag(Vector2 SoloDragDelta)
+    {
+        soloDragging = true;
+    }
+
+    void OnMultiDrag(Vector2 MultiDragDelta)
+    {
+        soloDragging = false;
     }
 
     void Update()
@@ -60,10 +74,8 @@ public class PlayerSlice : MonoBehaviour
             timeSinceLastSlash += Time.deltaTime;
         }
 
-        if (currFinger != null && timeSinceLastSlash <= maxSlashTime)
+        if (currFinger != null && timeSinceLastSlash <= maxSlashTime && soloDragging)
         {
-
-
             slashing = true;
             lineRenderer.SetVertexCount(i + 1);
             Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1);
@@ -72,14 +84,13 @@ public class PlayerSlice : MonoBehaviour
 
             BoxCollider2D BC2D = lineGameObject.AddComponent<BoxCollider2D>();
             BC2D.transform.position = lineRenderer.transform.position;
-            BC2D.size = new Vector2(0.1f, 0.1f);
+            BC2D.size = new Vector2(slashSize, slashSize);
         }
 
-        if (currFinger == null)
+        if (currFinger == null && slashing)
         {
             BoxCollider2D[] colliders = lineGameObject.GetComponents<BoxCollider2D>();
-            if (slashing)
-                Slash(colliders);
+            Slash(colliders);
 
             lineRenderer.SetVertexCount(0);
             i = 0;

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using Lean;
 
 public class PlayerShoot : MonoBehaviour, IDoesShoot
 {
@@ -8,53 +9,53 @@ public class PlayerShoot : MonoBehaviour, IDoesShoot
     public GameObject bulletPrefab;
     public float bulletVelocity;
 
+    public float fireRate { get; set; }
+
+    LeanFinger currFinger;
     Transform firePoint;
+
+    float timeSinceLastShot;
+    Vector2 currentDirection;
 
     void Start ()
     {
+
+        LeanTouch.OnMultiDrag += OnMultiDrag;
+
+        currFinger = null;
+
         firePoint = GameObject.Find("FirePoint").transform;
+
+        fireRate = 1f;
+        timeSinceLastShot = 0;
+        currentDirection = Vector2.right;
 	}
+
+    void OnMultiDrag(Vector2 MultiDragDelta)
+    {
+        Vector2 center = Camera.main.ScreenToWorldPoint(LeanTouch.GetCenterOfFingers());
+        currentDirection = (center - (Vector2)firePoint.position).normalized;
+        
+    }
 
     void Update ()
     {
-        HandleShootInput();
-    }
-
-    /// <summary>
-    /// Void method which gets and processes mouse input
-    /// </summary>
-    void HandleShootInput()
-    {
-        if (ShootPressed())
+        timeSinceLastShot += Time.deltaTime;
+        if (timeSinceLastShot >= fireRate)
         {
             Shoot();
+            timeSinceLastShot = 0;
         }
     }
 
     /// <summary>
-    /// Boolean method which returns whether or not the right mouse button was pressed
-    /// </summary>
-    /// <returns>Returns whether or not the right mouse button was pressed</returns>
-    bool ShootPressed()
-    {
-        if (Input.GetMouseButtonDown(1))
-            return true;
-        return false;
-    }
-
-    /// <summary>
-    /// Void method which takes the current mouse position in world-space and shoots a player bullet in that direction with
+    /// Void method which takes the current multitouch position in world-space and shoots a player bullet in that direction with
     /// a player defined "bulletVelocity"
     /// </summary>
     public void Shoot()
     {
-        Vector2 cursorInWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 direction = (cursorInWorldPos - (Vector2)firePoint.position).normalized;
-        Debug.DrawRay(firePoint.position, direction, Color.cyan, 3, false);
-        Debug.DrawLine(firePoint.position, cursorInWorldPos, Color.red, 3);
-
         GameObject bullet = (GameObject) Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
-        bullet.GetComponent<Rigidbody2D>().velocity = direction * bulletVelocity;
+        bullet.GetComponent<Rigidbody2D>().velocity = currentDirection * bulletVelocity;
         Destroy(bullet, 5f);
     }
 }
