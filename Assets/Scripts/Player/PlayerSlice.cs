@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 public class PlayerSlice : MonoBehaviour
@@ -9,14 +10,22 @@ public class PlayerSlice : MonoBehaviour
     public float slashDelay;
     public float slashDamage;
 
+    Lean.LeanFinger currFinger;
+
     GameObject lineGameObject;
     LineRenderer lineRenderer;
     int i;
     float timeSinceLastSlash;
     bool slashing;
 
+
+
     void Start()
     {
+        Lean.LeanTouch.OnFingerDown += OnFingerDown;
+        Lean.LeanTouch.OnFingerUp += OnFingerUp;
+        currFinger = null;
+
         lineGameObject = new GameObject("Line");
         lineGameObject.AddComponent<LineRenderer>();
 
@@ -31,6 +40,19 @@ public class PlayerSlice : MonoBehaviour
         slashing = false;
     }
 
+    public void OnFingerDown(Lean.LeanFinger finger)
+    {
+        currFinger = finger;
+    }
+
+    public void OnFingerUp(Lean.LeanFinger finger)
+    {
+        if (finger == currFinger)
+        {
+            currFinger = null;
+        }
+    }
+
     void Update()
     {
         if (slashing)
@@ -38,39 +60,38 @@ public class PlayerSlice : MonoBehaviour
             timeSinceLastSlash += Time.deltaTime;
         }
 
-        if (Input.touchCount > 0)
+        if (currFinger != null && timeSinceLastSlash <= maxSlashTime)
         {
-            Touch touch = Input.GetTouch(0);
 
-            if (touch.phase == TouchPhase.Moved && timeSinceLastSlash <= maxSlashTime)
-            {
-                slashing = true;
-                lineRenderer.SetVertexCount(i + 1);
-                Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1);
-                lineRenderer.SetPosition(i, Camera.main.ScreenToWorldPoint(mousePos));
-                i++;
 
-                BoxCollider2D BC2D = lineGameObject.AddComponent<BoxCollider2D>();
-                BC2D.transform.position = lineRenderer.transform.position;
-                BC2D.size = new Vector2(0.1f, 0.1f);
-            }
+            slashing = true;
+            lineRenderer.SetVertexCount(i + 1);
+            Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1);
+            lineRenderer.SetPosition(i, Camera.main.ScreenToWorldPoint(mousePos));
+            i++;
 
-            if (touch.phase == TouchPhase.Ended) //&& timeSinceLastSlash >= (maxSlashTime + slashDelay))
-            {
-                BoxCollider2D[] colliders = lineGameObject.GetComponents<BoxCollider2D>();
+            BoxCollider2D BC2D = lineGameObject.AddComponent<BoxCollider2D>();
+            BC2D.transform.position = lineRenderer.transform.position;
+            BC2D.size = new Vector2(0.1f, 0.1f);
+        }
+
+        if (currFinger == null)
+        {
+            BoxCollider2D[] colliders = lineGameObject.GetComponents<BoxCollider2D>();
+            if (slashing)
                 Slash(colliders);
 
-                lineRenderer.SetVertexCount(0);
-                i = 0;
+            lineRenderer.SetVertexCount(0);
+            i = 0;
 
-                foreach (BoxCollider2D b in colliders)
-                {
-                    Destroy(b);
-                }
-                timeSinceLastSlash = 0f;
+            foreach (BoxCollider2D b in colliders)
+            {
+                Destroy(b);
             }
+            timeSinceLastSlash = 0f;
         }
     }
+
 
     void Slash(BoxCollider2D[] colliders)
     {
@@ -88,6 +109,5 @@ public class PlayerSlice : MonoBehaviour
             }
         }
         slashing = false;
-        //implement slash method
     }
 }
