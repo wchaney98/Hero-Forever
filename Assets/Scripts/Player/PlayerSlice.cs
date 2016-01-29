@@ -2,34 +2,41 @@
 using Lean;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerSlice : MonoBehaviour
 {
     public Color c0 = Color.red;
     public Color c1 = Color.yellow;
-    public float maxSlashTime;
+    public float maxVertexCount;
     public float slashDelay;
     public float slashDamage;
     public float slashSize;
+    public float pointDelta;
+
+    public Sprite visualHitBoxSprite;
+    List<GameObject> visualHitBoxList = new List<GameObject>();
 
     LeanFinger currFinger;
 
     GameObject lineGameObject;
     LineRenderer lineRenderer;
     int i;
-    float timeSinceLastSlash;
     bool slashing;
     bool soloDragging;
+    Vector2 currSoloDragDelta;
 
     void Start()
     {
+        // Link to LeanTouch events
         LeanTouch.OnFingerDown += OnFingerDown;
         LeanTouch.OnFingerUp += OnFingerUp;
         LeanTouch.OnSoloDrag += OnSoloDrag;
         LeanTouch.OnMultiDrag += OnMultiDrag;
         currFinger = null;
 
-        lineGameObject = new GameObject("Line");
+        // Initialize LineRenderer
+        lineGameObject = new GameObject("SlashLine");
         lineGameObject.AddComponent<LineRenderer>();
 
         lineRenderer = lineGameObject.GetComponent<LineRenderer>();
@@ -38,17 +45,20 @@ public class PlayerSlice : MonoBehaviour
         lineRenderer.SetWidth(0.1f, 0f);
         lineRenderer.SetVertexCount(0);
 
+        // Initialize other variables
         i = 0;
-        timeSinceLastSlash = 0;
         slashing = false;
         soloDragging = false;
+        currSoloDragDelta = Vector2.zero;
     }
 
+    // Lock the current finger down into currFinger
     void OnFingerDown(LeanFinger finger)
     {
         currFinger = finger;
     }
 
+    // Un-lock the finger from currFinger if the finger is released
     void OnFingerUp(LeanFinger finger)
     {
         if (finger == currFinger)
@@ -57,11 +67,14 @@ public class PlayerSlice : MonoBehaviour
         }
     }
 
+    // If only one finger is dragging
     void OnSoloDrag(Vector2 SoloDragDelta)
     {
         soloDragging = true;
+        currSoloDragDelta += SoloDragDelta;
     }
-
+    
+    // If more than one finger is dragging
     void OnMultiDrag(Vector2 MultiDragDelta)
     {
         soloDragging = false;
@@ -69,49 +82,71 @@ public class PlayerSlice : MonoBehaviour
 
     void Update()
     {
-        if (slashing)
-        {
-            timeSinceLastSlash += Time.deltaTime;
-        }
 
-        if (currFinger != null && timeSinceLastSlash <= maxSlashTime && soloDragging)
+        if (currFinger != null && i <= maxVertexCount && soloDragging && (currSoloDragDelta.magnitude >= (pointDelta + 5) || currSoloDragDelta.magnitude >= (pointDelta - 5)))
         {
+            // For each vertex
+
+            // Set the lineRenderer position to mouse position
             slashing = true;
             lineRenderer.SetVertexCount(i + 1);
             Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1);
             lineRenderer.SetPosition(i, Camera.main.ScreenToWorldPoint(mousePos));
-            i++;
 
+            // Create a collider at this position, with size slashsize sqrd
             BoxCollider2D BC2D = lineGameObject.AddComponent<BoxCollider2D>();
             BC2D.transform.position = lineRenderer.transform.position;
             BC2D.size = new Vector2(slashSize, slashSize);
+
+            // Create the visual hitbox for each "point" in the slash
+            GameObject visualHitBoxGameObject = new GameObject("Hitbox Sprite");
+            SpriteRenderer visualHitBox = visualHitBoxGameObject.AddComponent<SpriteRenderer>();
+            visualHitBox.sprite = visualHitBoxSprite;
+            visualHitBoxGameObject.transform.position = Camera.main.ScreenToWorldPoint(mousePos);
+            
+            visualHitBoxList.Add(visualHitBoxGameObject);
+
+            // Increment the vertex count and reset the drag delta
+            i++;
+            currSoloDragDelta = Vector2.zero;
         }
 
         if (currFinger == null && slashing)
         {
+            // Cleanup
+
+            // Get colliders
             BoxCollider2D[] colliders = lineGameObject.GetComponents<BoxCollider2D>();
             Slash(colliders);
 
+            // Reset vertex count
             lineRenderer.SetVertexCount(0);
             i = 0;
 
+            // Destroy colliders and hitboxes for the current slash
             foreach (BoxCollider2D b in colliders)
             {
                 Destroy(b);
             }
-            timeSinceLastSlash = 0f;
+
+            foreach (GameObject go in visualHitBoxList)
+            {
+                Destroy(go);
+            }
         }
     }
 
-
+    /// <summary>
+    /// Checks each collider in the slash to see if it collides with an enemy; if so, the enemy takes slash damage
+    /// </summary>
+    /// <param name="colliders">Array for colliders from lineRenderer</param>
     void Slash(BoxCollider2D[] colliders)
     {
-        Debug.Log("slash");
         Enemy[] enemies = FindObjectsOfType<Enemy>();
 
-        foreach (BoxCollider2D b in colliders)
+        foreach (Enemy enemy in enemies)
         {
-            foreach (Enemy enemy in enemies)
+            foreach (BoxCollider2D b in colliders)
             {
                 if (b.IsTouching(enemy.GetComponent<BoxCollider2D>()))
                 {

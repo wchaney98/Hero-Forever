@@ -15,6 +15,7 @@ public class FirePoint : MonoBehaviour
 	
 	void Update ()
     {
+        // Bobs the FirePoint up and down slowly
         transform.position = new Vector3(transform.position.x, (Mathf.Sin(Time.timeSinceLevelLoad * horizontalSpeed)
                                          * amplitude + initialY), transform.position.z);
     }

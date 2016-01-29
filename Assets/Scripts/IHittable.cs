@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Applied to objects that stop projectiles and objects but not take damage
+/// </summary>
 public interface IHittable
 {
-    // Interface for objects that are hittable but not damageable (i.e. they only make sound on impact)
-
     void Hit();
 }
