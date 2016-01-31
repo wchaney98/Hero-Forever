@@ -16,9 +16,13 @@ public class GameManager : MonoBehaviour
     // Spawners use spawnEnemies function every waveTime seconds
     public float waveTime;
 
-    // GameObject of HUD for Player Health (text)
+    // GameObject of Player health HUD and its text
     public GameObject HudPlayerHealthObj;
     Text hudPlayerHealth;
+
+    // GameObject of Player gold HUD and its text
+    public GameObject HudPlayerGoldObj;
+    Text hudPlayerGold;
 
     // Array for Spawners
     Spawner[] spawners = new Spawner[4];
@@ -28,6 +32,7 @@ public class GameManager : MonoBehaviour
 
     // Public initial player health value
     public float startingPlayerHealth;
+    public int startingPlayerGold;
 
     // Declare PlayerState struct
     public PlayerState playerState;
@@ -40,14 +45,15 @@ public class GameManager : MonoBehaviour
         spawners[2] = botAirSpawner;
         spawners[3] = groundSpawner;
 
-        // Initialize HUDPlayerHealth text object
+        // Initialize texts to their respective GO's
         hudPlayerHealth = HudPlayerHealthObj.GetComponent<Text>();
+        hudPlayerGold = HudPlayerGoldObj.GetComponent<Text>();
 
         // Initialize wave-time to 0
         timeSinceWave = 0;
 
         // Initialize PlayerState struct
-        playerState = new PlayerState(startingPlayerHealth);
+        playerState = new PlayerState(startingPlayerHealth, startingPlayerGold);
     }
 	
 	void Update ()
@@ -78,5 +84,15 @@ public class GameManager : MonoBehaviour
     void UpdateHUD()
     {
         hudPlayerHealth.text = "HEALTH: " + playerState.health;
+        hudPlayerGold.text = "GOLD: " + playerState.gold;
+    }
+
+    /// <summary>
+    /// When an enemy dies, call this function to add the respective amount of gold to the player's total
+    /// </summary>
+    /// <param name="enemy">The enemy that died</param>
+    public void LootDeadEnemy(Enemy enemy)
+    {
+        playerState.gold += enemy.goldDrop;
     }
 }

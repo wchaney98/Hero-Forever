@@ -16,8 +16,10 @@ public class PlayerArea : MonoBehaviour
         Debug.Log("Triggered");
         if (other.gameObject.HasTag("Enemy"))
         {
+            // Take damage
             Enemy enemy = other.gameObject.GetComponent(typeof(Enemy)) as Enemy;
             GM.playerState.health -= enemy.health;
+
             // Safely destroy the enemy object
             enemy.health = 0;
         }

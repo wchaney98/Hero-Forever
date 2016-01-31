@@ -16,6 +16,7 @@ public class PlayerSlice : MonoBehaviour
 
     public Sprite visualHitBoxSprite;
     List<GameObject> visualHitBoxList = new List<GameObject>();
+    List<BoxCollider2D> collidersList = new List<BoxCollider2D>();
 
     LeanFinger currFinger;
 
@@ -83,7 +84,7 @@ public class PlayerSlice : MonoBehaviour
     void Update()
     {
 
-        if (currFinger != null && i <= maxVertexCount && soloDragging && (currSoloDragDelta.magnitude >= (pointDelta + 5) || currSoloDragDelta.magnitude >= (pointDelta - 5)))
+        if (currFinger != null && i <= maxVertexCount && soloDragging && (currSoloDragDelta.magnitude >= pointDelta))
         {
             // For each vertex
 
@@ -91,12 +92,6 @@ public class PlayerSlice : MonoBehaviour
             slashing = true;
             lineRenderer.SetVertexCount(i + 1);
             Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1);
-            lineRenderer.SetPosition(i, Camera.main.ScreenToWorldPoint(mousePos));
-
-            // Create a collider at this position, with size slashsize sqrd
-            BoxCollider2D BC2D = lineGameObject.AddComponent<BoxCollider2D>();
-            BC2D.transform.position = lineRenderer.transform.position;
-            BC2D.size = new Vector2(slashSize, slashSize);
 
             // Create the visual hitbox for each "point" in the slash
             GameObject visualHitBoxGameObject = new GameObject("Hitbox Sprite");
@@ -106,7 +101,15 @@ public class PlayerSlice : MonoBehaviour
             
             visualHitBoxList.Add(visualHitBoxGameObject);
 
+            // Create a collider at this position, with size slashsize sqrd
+            BoxCollider2D BC2D = visualHitBoxGameObject.AddComponent<BoxCollider2D>();
+            BC2D.transform.position = visualHitBoxGameObject.transform.position;
+            BC2D.size = new Vector2(slashSize, slashSize);
+
+            collidersList.Add(BC2D);
+
             // Increment the vertex count and reset the drag delta
+            lineRenderer.SetPosition(i, Camera.main.ScreenToWorldPoint(mousePos));
             i++;
             currSoloDragDelta = Vector2.zero;
         }
@@ -116,15 +119,14 @@ public class PlayerSlice : MonoBehaviour
             // Cleanup
 
             // Get colliders
-            BoxCollider2D[] colliders = lineGameObject.GetComponents<BoxCollider2D>();
-            Slash(colliders);
+            Slash(collidersList);
 
             // Reset vertex count
             lineRenderer.SetVertexCount(0);
             i = 0;
 
             // Destroy colliders and hitboxes for the current slash
-            foreach (BoxCollider2D b in colliders)
+            foreach (BoxCollider2D b in collidersList)
             {
                 Destroy(b);
             }
@@ -140,17 +142,24 @@ public class PlayerSlice : MonoBehaviour
     /// Checks each collider in the slash to see if it collides with an enemy; if so, the enemy takes slash damage
     /// </summary>
     /// <param name="colliders">Array for colliders from lineRenderer</param>
-    void Slash(BoxCollider2D[] colliders)
+    void Slash(List<BoxCollider2D> colliders)
     {
         Enemy[] enemies = FindObjectsOfType<Enemy>();
 
-        foreach (Enemy enemy in enemies)
+        if (colliders != null)
         {
-            foreach (BoxCollider2D b in colliders)
+            foreach (Enemy enemy in enemies)
             {
-                if (b.IsTouching(enemy.GetComponent<BoxCollider2D>()))
+                foreach (BoxCollider2D b in colliders)
                 {
-                    enemy.SendMessage("TakeDamage", slashDamage);
+                    if (b != null)
+                    {
+                        if (b.IsTouching(enemy.GetComponent<BoxCollider2D>()))
+                        {
+                            enemy.SendMessage("TakeDamage", slashDamage);
+                            Debug.Log(enemy + " was just slashed");
+                        }
+                    }
                 }
             }
         }
