@@ -24,6 +24,9 @@ public class GameManager : MonoBehaviour
     public GameObject HudPlayerGoldObj;
     Text hudPlayerGold;
 
+    // Prefab for gold drop object and its text
+    public GameObject HudGoldDropObj;
+
     // Array for Spawners
     Spawner[] spawners = new Spawner[4];
 
@@ -84,7 +87,7 @@ public class GameManager : MonoBehaviour
     void UpdateHUD()
     {
         hudPlayerHealth.text = "HEALTH: " + playerState.health;
-        hudPlayerGold.text = "GOLD: " + playerState.gold;
+        hudPlayerGold.text = "G O L D : " + playerState.gold;
     }
 
     /// <summary>
@@ -94,5 +97,16 @@ public class GameManager : MonoBehaviour
     public void LootDeadEnemy(Enemy enemy)
     {
         playerState.gold += enemy.goldDrop;
+
+        GameObject canvasObj = GameObject.Find("Canvas");
+        Canvas canvas = canvasObj.GetComponent<Canvas>();
+
+        GameObject dropTextObj = Instantiate(HudGoldDropObj);
+        Text dropText = dropTextObj.GetComponent<Text>();
+        RectTransform dropTextRect = dropTextObj.GetComponent<RectTransform>();
+
+        dropText.transform.SetParent(canvas.transform, false);
+        dropTextRect.position = enemy.transform.position;
+        dropText.text = "+" + enemy.goldDrop + "g";
     }
 }
