@@ -24,6 +24,10 @@ public class GameManager : MonoBehaviour
     public GameObject HudPlayerGoldObj;
     Text hudPlayerGold;
 
+    // GameObject of Player gold HUD and its text
+    public GameObject HudPlayerXPObj;
+    Text hudPlayerXP;
+
     // Prefab for gold drop object and its text
     public GameObject HudGoldDropObj;
 
@@ -36,6 +40,8 @@ public class GameManager : MonoBehaviour
     // Public initial player health value
     public float startingPlayerHealth;
     public int startingPlayerGold;
+    public int startingPlayerXP;
+    public int firstToSecondLevelXP;
 
     // Declare PlayerState struct
     public PlayerState playerState;
@@ -51,12 +57,13 @@ public class GameManager : MonoBehaviour
         // Initialize texts to their respective GO's
         hudPlayerHealth = HudPlayerHealthObj.GetComponent<Text>();
         hudPlayerGold = HudPlayerGoldObj.GetComponent<Text>();
+        hudPlayerXP = HudPlayerXPObj.GetComponent<Text>();
 
         // Initialize wave-time to 0
         timeSinceWave = 0;
 
         // Initialize PlayerState struct
-        playerState = new PlayerState(startingPlayerHealth, startingPlayerGold);
+        playerState = new PlayerState(startingPlayerHealth, startingPlayerGold, startingPlayerXP, firstToSecondLevelXP, 0);
     }
 	
 	void Update ()
@@ -78,6 +85,12 @@ public class GameManager : MonoBehaviour
         }
         // End of spawning code
 
+        // If at or above XP for next level, begin progressing to next level
+        if (playerState.xp >= playerState.xpToNextLevel)
+        {
+
+        }
+
         UpdateHUD();
 	}
 
@@ -88,6 +101,8 @@ public class GameManager : MonoBehaviour
     {
         hudPlayerHealth.text = "HEALTH: " + playerState.health;
         hudPlayerGold.text = "G O L D : " + playerState.gold;
+        //todo:
+        hudPlayerXP.text = "XP: " + (playerState.xp - playerState.xpForLastLevel) + " / " + playerState.xpToNextLevel;
     }
 
     /// <summary>
