@@ -8,6 +8,7 @@ Temp
 *.user
 *.pidb
 *.userprefs
+*.pdb
 
 Library/*
 Temp/*
