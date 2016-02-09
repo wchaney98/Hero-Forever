@@ -12,6 +12,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     public float health;
     public float speed;
+    public int xp;
 
     [SerializeField]
     int worth;

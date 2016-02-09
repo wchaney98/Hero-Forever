@@ -48,6 +48,6 @@ public class HUDGoldDrop : MonoBehaviour
         }
 
         // Destroy the object when the text is fully transparent
-        Destroy(this);
+        Destroy(gameObject);
     }
 }

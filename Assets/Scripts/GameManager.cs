@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
 
     // Public initial player health value
     public float startingPlayerHealth;
+    public float xpMultiplier;
     public int startingPlayerGold;
     public int startingPlayerXP;
     public int firstToSecondLevelXP;
@@ -63,7 +64,10 @@ public class GameManager : MonoBehaviour
         timeSinceWave = 0;
 
         // Initialize PlayerState struct
-        playerState = new PlayerState(startingPlayerHealth, startingPlayerGold, startingPlayerXP, firstToSecondLevelXP, 0);
+        playerState = new PlayerState(startingPlayerHealth, xpMultiplier, startingPlayerGold, startingPlayerXP, firstToSecondLevelXP);
+
+        // Initially disable attribute panel
+        GameObject.Find("AttributePanel").SetActive(false);
     }
 	
 	void Update ()
@@ -85,12 +89,7 @@ public class GameManager : MonoBehaviour
         }
         // End of spawning code
 
-        // If at or above XP for next level, begin progressing to next level
-        if (playerState.xp >= playerState.xpToNextLevel)
-        {
-
-        }
-
+        UpdateInternalsStats();
         UpdateHUD();
 	}
 
@@ -102,7 +101,19 @@ public class GameManager : MonoBehaviour
         hudPlayerHealth.text = "HEALTH: " + playerState.health;
         hudPlayerGold.text = "G O L D : " + playerState.gold;
         //todo:
-        hudPlayerXP.text = "XP: " + (playerState.xp - playerState.xpForLastLevel) + " / " + playerState.xpToNextLevel;
+        hudPlayerXP.text = "XP: " + playerState.xpCurrent + " / " + playerState.xpToNextLevel + "\nTOTAL: " + playerState.xpRunningTotal;
+    }
+
+    /// <summary>
+    /// Currently updates playerState variables and does necessary xp calculations
+    /// </summary>
+    void UpdateInternalsStats()
+    {        
+        // If at or above XP for next level, begin progressing to next level
+        if (playerState.xpCurrent >= playerState.xpToNextLevel)
+        {
+            playerState.LevelUp();
+        }
     }
 
     /// <summary>
@@ -111,8 +122,14 @@ public class GameManager : MonoBehaviour
     /// <param name="enemy">The enemy that died</param>
     public void LootDeadEnemy(Enemy enemy)
     {
+        // "Loot" the enemy's predefined gold and xp and give it to the playerState
         playerState.gold += enemy.goldDrop;
+        playerState.xpCurrent += enemy.xp;
 
+        // Update grand total of player xp
+        playerState.xpRunningTotal += enemy.xp;
+
+        // Gold dropped text indicator
         GameObject canvasObj = GameObject.Find("Canvas");
         Canvas canvas = canvasObj.GetComponent<Canvas>();
 
