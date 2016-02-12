@@ -34,3 +34,4 @@ NetworkManager.asset
 ScriptMapper
 player_win_x64.pdb
 player_win_x64_s.pdb
+*.pdb
