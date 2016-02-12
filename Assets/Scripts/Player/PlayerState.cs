@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -20,13 +21,16 @@ public struct PlayerState
     public int dexterity;
     public int spirit;
     public byte statPoints;
+    public bool statPointsAreAvailable;
 
     public long xpRunningTotal;
 
     byte level;
     byte pointsPerLevel;
     int firstToSecondLevelXP;
-    GameObject attributePanel;
+    float colorLerpDuration;
+    float elapsedColorLerpTime;
+    Text attrPanelToggLabel;
     GameManager GM;
 
     public PlayerState(float health, float xpMultiplier, int gold, int xp, int firstToSecondLevelXP)
@@ -35,7 +39,7 @@ public struct PlayerState
         this.health = health;
         this.xpMultiplier = xpMultiplier;
         this.gold = gold;
-        this.xpCurrent = xp;
+        xpCurrent = xp;
         this.firstToSecondLevelXP = firstToSecondLevelXP;
 
         // Level 1 to Level 2 xp init
@@ -50,10 +54,13 @@ public struct PlayerState
         dexterity = 1;
         spirit = 1;
         statPoints = 0;
+        statPointsAreAvailable = false;
         pointsPerLevel = 3;
 
         // Attribute panel and GM script init
-        attributePanel = GameObject.Find("AttributePanel");
+        attrPanelToggLabel = GameObject.Find("Label").GetComponent<Text>();
+        colorLerpDuration = 1f;
+        elapsedColorLerpTime = 0f;
         GM = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 	// More attributes to be added
@@ -72,16 +79,24 @@ public struct PlayerState
 
         // Set how much xp it will take to get to the next level
         xpToNextLevel = (int)(xpToNextLevel *  xpMultiplier);
-
-        // todo: implement ui to increase any stats any combo of 3 pts
-        AlertStatIncrease();
-
-        //Debug.Log("New Level: " + level + " at " + xpCurrent + " xp and " + xpToNextLevel + " to next lvl");
     }
 
-    void AlertStatIncrease()
+    /// <summary>
+    /// When the player has available stat points, flash the dropdown menu label text
+    /// </summary>
+    /// <param name="deltaTime">delta time from Update</param>
+    public void AlertStatPointsAvailable(float deltaTime, Color initialColor, Color finalColor)
     {
-        Debug.Log("bring up point distr");
-        attributePanel.SetActive(true);
+        // fix 
+        float t = elapsedColorLerpTime / colorLerpDuration;
+        if (t <= 1)
+        {
+            attrPanelToggLabel.color = Color.Lerp(initialColor, finalColor, t);
+            elapsedColorLerpTime += deltaTime;
+        } else if (t >= 1)
+        {
+            attrPanelToggLabel.color = Color.Lerp(finalColor, initialColor, t);
+            elapsedColorLerpTime -= deltaTime;
+        }
     }
 }

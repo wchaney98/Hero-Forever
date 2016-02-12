@@ -14,6 +14,10 @@ public class AttributePanel : MonoBehaviour
 
     GameManager GM;
 
+    Button powerButton;
+    Button dexterityButton;
+    Button spiritButton;
+
 	void Start ()
     {
         pointsRemainingText = GameObject.Find("PointsRemaining").GetComponent<Text>();
@@ -22,6 +26,10 @@ public class AttributePanel : MonoBehaviour
         spiritText = GameObject.Find("SpiritText").GetComponent<Text>();
 
         GM = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        powerButton = GameObject.Find("AddPowerButton").GetComponent<Button>();
+        dexterityButton = GameObject.Find("AddDexterityButton").GetComponent<Button>();
+        spiritButton = GameObject.Find("AddSpiritButton").GetComponent<Button>();
     }
 	
 	void LateUpdate ()
@@ -33,11 +41,51 @@ public class AttributePanel : MonoBehaviour
         //todo: remove possibility for statpoints to go negative (actually to 255)
 	}
 
-    public void OnAddPower()
+    public void OnToggleDropDown()
     {
-        GM.playerState.power += 1;
-        GM.playerState.statPoints -= 1;
+        gameObject.SetActive(!gameObject.activeSelf);
     }
 
-    //todo: add OnAddDexterity and Spirit functions
+    public void OnAddPower()
+    {
+        if (GM.playerState.statPoints > 0)
+        {
+            powerButton.interactable = true;
+            GM.playerState.power += 1;
+            GM.playerState.statPoints -= 1;
+        }
+        else
+        {
+            powerButton.interactable = false;
+        }
+    }
+
+    public void OnAddDexterity()
+    {
+        if (GM.playerState.statPoints > 0)
+        {
+            dexterityButton.interactable = true;
+            GM.playerState.dexterity += 1;
+            GM.playerState.statPoints -= 1;
+        }
+        else
+        {
+            dexterityButton.interactable = false;
+        }
+    }
+    
+
+    public void OnAddSpirit()
+    {
+        if (GM.playerState.statPoints > 0)
+        {
+            spiritButton.interactable = true;
+            GM.playerState.spirit += 1;
+            GM.playerState.statPoints -= 1;
+        }
+        else
+        {
+            spiritButton.interactable = false;
+        }
+    }
 }

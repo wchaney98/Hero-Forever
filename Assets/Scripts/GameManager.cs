@@ -114,6 +114,13 @@ public class GameManager : MonoBehaviour
         {
             playerState.LevelUp();
         }
+
+        // Flash player stats UI if stat points are available
+        if (playerState.statPoints > 0)
+        {
+            // fix 
+            playerState.AlertStatPointsAvailable(Time.deltaTime, Color.blue, Color.yellow);
+        }
     }
 
     /// <summary>
