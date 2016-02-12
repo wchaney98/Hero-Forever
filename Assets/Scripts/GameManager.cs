@@ -47,6 +47,9 @@ public class GameManager : MonoBehaviour
     // Declare PlayerState struct
     public PlayerState playerState;
 
+    // Attribute panel toggle label text ref
+    Text attrPanelToggLabel;
+
 	void Start ()
     {
         // Assign spawners to spawners array
@@ -68,6 +71,9 @@ public class GameManager : MonoBehaviour
 
         // Initially disable attribute panel
         GameObject.Find("AttributePanel").SetActive(false);
+
+        // Load attribute panel toggle label text ref
+        attrPanelToggLabel = GameObject.Find("Label").GetComponent<Text>();
     }
 	
 	void Update ()
@@ -115,11 +121,13 @@ public class GameManager : MonoBehaviour
             playerState.LevelUp();
         }
 
-        // Flash player stats UI if stat points are available
+        // Flash player stats UI if stat points are available, otherwise keep it blue
         if (playerState.statPoints > 0)
         {
-            // fix 
             playerState.AlertStatPointsAvailable(Time.deltaTime, Color.blue, Color.yellow);
+        } else
+        {
+            attrPanelToggLabel.color = Color.blue;
         }
     }
 

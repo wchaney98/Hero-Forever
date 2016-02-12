@@ -30,6 +30,7 @@ public struct PlayerState
     int firstToSecondLevelXP;
     float colorLerpDuration;
     float elapsedColorLerpTime;
+    bool isBlue;
     Text attrPanelToggLabel;
     GameManager GM;
 
@@ -59,8 +60,9 @@ public struct PlayerState
 
         // Attribute panel and GM script init
         attrPanelToggLabel = GameObject.Find("Label").GetComponent<Text>();
-        colorLerpDuration = 1f;
+        colorLerpDuration = 1.5f;
         elapsedColorLerpTime = 0f;
+        isBlue = false;
         GM = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 	// More attributes to be added
@@ -82,21 +84,29 @@ public struct PlayerState
     }
 
     /// <summary>
-    /// When the player has available stat points, flash the dropdown menu label text
+    /// When the player has available stat points, lerps between the initialColor and finalColor
     /// </summary>
     /// <param name="deltaTime">delta time from Update</param>
     public void AlertStatPointsAvailable(float deltaTime, Color initialColor, Color finalColor)
     {
-        // fix 
+        // Lerps between 2 colors
+        elapsedColorLerpTime += deltaTime;
         float t = elapsedColorLerpTime / colorLerpDuration;
-        if (t <= 1)
+
+        if (t >= 1)
+        {
+            isBlue = !isBlue;
+            t = 0f;
+            elapsedColorLerpTime = 0f;
+        }
+
+        if (t <= 1 && isBlue)
         {
             attrPanelToggLabel.color = Color.Lerp(initialColor, finalColor, t);
-            elapsedColorLerpTime += deltaTime;
-        } else if (t >= 1)
+        } 
+        else if (t <= 1 && !isBlue)
         {
             attrPanelToggLabel.color = Color.Lerp(finalColor, initialColor, t);
-            elapsedColorLerpTime -= deltaTime;
         }
     }
 }
