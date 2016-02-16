@@ -28,8 +28,9 @@ public class GameManager : MonoBehaviour
     public GameObject HudPlayerXPObj;
     Text hudPlayerXP;
 
-    // Prefab for gold drop object and its text
-    public GameObject HudGoldDropObj;
+    // Prefabs for hovering text indicators
+    public GameObject HudGoldDropPrefab;
+    public GameObject HudDamageDealtPrefab;
 
     // Array for Spawners
     Spawner[] spawners = new Spawner[4];
@@ -49,6 +50,9 @@ public class GameManager : MonoBehaviour
 
     // Attribute panel toggle label text ref
     Text attrPanelToggLabel;
+
+    // Reference to UI Canvas
+    Canvas canvas;
 
 	void Start ()
     {
@@ -74,6 +78,9 @@ public class GameManager : MonoBehaviour
 
         // Load attribute panel toggle label text ref
         attrPanelToggLabel = GameObject.Find("Label").GetComponent<Text>();
+
+        // Init ref to Canvas object
+        canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
     }
 	
 	void Update ()
@@ -132,7 +139,7 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// When an enemy dies, call this function to add the respective amount of gold to the player's total
+    /// When an enemy dies, call this function to add the respective amount of gold to the player's total (and to instantiate a gold drop text)
     /// </summary>
     /// <param name="enemy">The enemy that died</param>
     public void LootDeadEnemy(Enemy enemy)
@@ -145,15 +152,28 @@ public class GameManager : MonoBehaviour
         playerState.xpRunningTotal += enemy.xp;
 
         // Gold dropped text indicator
-        GameObject canvasObj = GameObject.Find("Canvas");
-        Canvas canvas = canvasObj.GetComponent<Canvas>();
-
-        GameObject dropTextObj = Instantiate(HudGoldDropObj);
+        GameObject dropTextObj = Instantiate(HudGoldDropPrefab);
         Text dropText = dropTextObj.GetComponent<Text>();
         RectTransform dropTextRect = dropTextObj.GetComponent<RectTransform>();
 
         dropText.transform.SetParent(canvas.transform, false);
         dropTextRect.position = enemy.transform.position;
         dropText.text = "+" + enemy.goldDrop + "g";
+    }
+
+    /// <summary>
+    /// Instantiate damage dealt text where damage was dealt
+    /// </summary>
+    /// <param name="obj">Obj to display damage text, i.e. obj.transform</param>
+    /// <param name="damager">What is dealing damage, implements IDoesDamage</param>
+    public void DisplayDamageDealt(GameObject obj, IDoesDamage damager)
+    {
+        GameObject dropTextObj = Instantiate(HudDamageDealtPrefab);
+        Text dropText = dropTextObj.GetComponent<Text>();
+        RectTransform dropTextRect = dropTextObj.GetComponent<RectTransform>();
+
+        dropText.transform.SetParent(canvas.transform, false);
+        dropTextRect.position = new Vector3(obj.transform.position.x + Random.Range(-0.5f, 0.5f), obj.transform.position.y + Random.Range(-0.5f, 0.5f), 0);
+        dropText.text = "-" + damager.Damage.ToString();
     }
 }

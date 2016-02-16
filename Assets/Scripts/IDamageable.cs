@@ -6,5 +6,5 @@ using System.Collections;
 /// </summary>
 public interface IDamageable
 {
-    void TakeDamage(float damage);
+    void TakeDamage(int damage);
 }

@@ -1,28 +1,32 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System;
 
-public class PlayerBullet : MonoBehaviour
+public class PlayerBullet : MonoBehaviour, IDoesDamage
 {
     public GameObject HudDamageDealtObj;
-    public float bulletDamage;
+    public int bulletDamage;
+
+    GameManager GM;
+
+    public int Damage
+    {
+        get
+        { return bulletDamage; }
+    }
+
+    void Start()
+    {
+        GM = GameObject.Find("GameManager").GetComponent<GameManager>();
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         // If the bullet hits an enemy, deal damage and display damage dealt
         if (other.gameObject.HasTag("Enemy"))
         {
-            GameObject canvasObj = GameObject.Find("Canvas");
-            Canvas canvas = canvasObj.GetComponent<Canvas>();
-
-            GameObject dropTextObj = Instantiate(HudDamageDealtObj);
-            Text dropText = dropTextObj.GetComponent<Text>();
-            RectTransform dropTextRect = dropTextObj.GetComponent<RectTransform>();
-
-            dropText.transform.SetParent(canvas.transform, false);
-            dropTextRect.position = gameObject.transform.position;
-            dropText.text = bulletDamage.ToString();
-
+            GM.DisplayDamageDealt(gameObject, this);
             other.gameObject.SendMessage("TakeDamage", bulletDamage);
             Destroy(gameObject);
         }

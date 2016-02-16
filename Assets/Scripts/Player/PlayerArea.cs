@@ -4,10 +4,12 @@ using System.Collections;
 public class PlayerArea : MonoBehaviour
 {
     GameManager GM;
+    GameObject player;
 
 	void Start ()
     {
         GM = GameObject.Find("GameManager").GetComponent<GameManager>();
+        player = GameObject.Find("Player");
 	}
 	
 	void OnTriggerEnter2D(Collider2D other)
@@ -19,6 +21,9 @@ public class PlayerArea : MonoBehaviour
             // Take damage
             Enemy enemy = other.gameObject.GetComponent(typeof(Enemy)) as Enemy;
             GM.playerState.health -= enemy.health;
+
+            // Display damage dealt
+            GM.DisplayDamageDealt(player, enemy);
 
             // Safely destroy the enemy object
             enemy.health = 0;

@@ -27,12 +27,10 @@ public struct PlayerState
 
     byte level;
     byte pointsPerLevel;
-    int firstToSecondLevelXP;
     float colorLerpDuration;
     float elapsedColorLerpTime;
     bool isBlue;
     Text attrPanelToggLabel;
-    GameManager GM;
 
     public PlayerState(float health, float xpMultiplier, int gold, int xp, int firstToSecondLevelXP)
     {
@@ -41,7 +39,6 @@ public struct PlayerState
         this.xpMultiplier = xpMultiplier;
         this.gold = gold;
         xpCurrent = xp;
-        this.firstToSecondLevelXP = firstToSecondLevelXP;
 
         // Level 1 to Level 2 xp init
         xpToNextLevel = firstToSecondLevelXP;
@@ -63,7 +60,6 @@ public struct PlayerState
         colorLerpDuration = 1.5f;
         elapsedColorLerpTime = 0f;
         isBlue = false;
-        GM = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 	// More attributes to be added
 

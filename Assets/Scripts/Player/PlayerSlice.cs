@@ -4,13 +4,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlayerSlice : MonoBehaviour
+public class PlayerSlice : MonoBehaviour, IDoesDamage
 {
+    // Vars for slash
     public Color c0 = Color.red;
     public Color c1 = Color.yellow;
     public float maxVertexCount;
     public float slashDelay;
-    public float slashDamage;
+    public int slashDamage;
     public float slashSize;
     public float pointDelta;
 
@@ -26,6 +27,12 @@ public class PlayerSlice : MonoBehaviour
     bool slashing;
     bool soloDragging;
     Vector2 currSoloDragDelta;
+
+    // Implement IDoesDamage
+    public int Damage { get { return slashDamage; } }
+
+    // GameManager
+    GameManager GM;
 
     void Start()
     {
@@ -51,6 +58,9 @@ public class PlayerSlice : MonoBehaviour
         slashing = false;
         soloDragging = false;
         currSoloDragDelta = Vector2.zero;
+
+        // Init GM ref
+        GM = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     // Lock the current finger down into currFinger
@@ -157,6 +167,7 @@ public class PlayerSlice : MonoBehaviour
                         if (b.IsTouching(enemy.GetComponent<BoxCollider2D>()))
                         {
                             enemy.SendMessage("TakeDamage", slashDamage);
+                            GM.DisplayDamageDealt(enemy.gameObject, this);
                             Debug.Log(enemy + " was just slashed");
                         }
                     }

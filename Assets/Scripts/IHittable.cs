@@ -6,5 +6,5 @@ using System.Collections;
 /// </summary>
 public interface IHittable
 {
-    void Hit();
+    void OnHit();
 }

@@ -34,11 +34,11 @@ public class AttributePanel : MonoBehaviour
 	
 	void LateUpdate ()
     {
+        DetermineButtonInteractivity();
         pointsRemainingText.text = "Points Remaining: " + GM.playerState.statPoints;
         powerText.text = "Power: " + GM.playerState.power;
         dexterityText.text = "Dexterity: " + GM.playerState.dexterity;
         spiritText.text = "Spirit: " + GM.playerState.spirit;
-        //todo: remove possibility for statpoints to go negative (actually to 255)
 	}
 
     public void OnToggleDropDown()
@@ -48,43 +48,34 @@ public class AttributePanel : MonoBehaviour
 
     public void OnAddPower()
     {
-        if (GM.playerState.statPoints > 0)
-        {
-            powerButton.interactable = true;
             GM.playerState.power += 1;
             GM.playerState.statPoints -= 1;
-        }
-        else
-        {
-            powerButton.interactable = false;
-        }
     }
 
     public void OnAddDexterity()
     {
-        if (GM.playerState.statPoints > 0)
-        {
-            dexterityButton.interactable = true;
             GM.playerState.dexterity += 1;
             GM.playerState.statPoints -= 1;
-        }
-        else
-        {
-            dexterityButton.interactable = false;
-        }
     }
     
-
     public void OnAddSpirit()
+    {
+            GM.playerState.spirit += 1;
+            GM.playerState.statPoints -= 1;
+    }
+
+    void DetermineButtonInteractivity()
     {
         if (GM.playerState.statPoints > 0)
         {
+            powerButton.interactable = true;
+            dexterityButton.interactable = true;
             spiritButton.interactable = true;
-            GM.playerState.spirit += 1;
-            GM.playerState.statPoints -= 1;
         }
         else
         {
+            powerButton.interactable = false;
+            dexterityButton.interactable = false;
             spiritButton.interactable = false;
         }
     }

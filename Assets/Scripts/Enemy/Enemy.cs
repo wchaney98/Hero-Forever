@@ -6,11 +6,11 @@ using System;
 /// Abstract enemy class to group together all enemies. Uses the IDamageable interface.
 /// </summary>
 [RequireComponent (typeof (BoxCollider2D))]
-public abstract class Enemy : MonoBehaviour, IDamageable
+public abstract class Enemy : MonoBehaviour, IDamageable, IDoesDamage
 {
     // Abstract class to serve as an outline for all enemies
 
-    public float health;
+    public int health;
     public float speed;
     public int xp;
 
@@ -18,6 +18,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     int worth;
 
     public int goldDrop { get { return worth; } }
+    public int Damage { get { return health; } }
 
     Rigidbody2D RB2D;
     GameManager GM;
@@ -34,7 +35,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     /// Takes a float to subtract from the enemy's health, "taking damage."
     /// </summary>
     /// <param name="damage">Damage inflicted upon enemy</param>
-    public virtual void TakeDamage(float damage)
+    public virtual void TakeDamage(int damage)
     {
         health -= damage;
     }

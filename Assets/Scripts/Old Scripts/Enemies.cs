@@ -54,7 +54,7 @@ public abstract class Enemies : MonoBehaviour, IDamageable
         }
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(int damage)
     {
         health -= (int)damage;
     }
