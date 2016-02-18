@@ -7,8 +7,7 @@ public class InventoryManager : MonoBehaviour
     // Slot prefab
     public GameObject slotPrefab;
 
-    List<List<Slot>> inventory = new List<List<Slot>>();
-    int maxColumns = 6;
+    List<Slot> slots = new List<Slot>();
 
     int currentRow;
     int currentColumn;
@@ -17,7 +16,6 @@ public class InventoryManager : MonoBehaviour
     {
         currentRow = 1;
         currentColumn = 1;
-        inventory.Add(new List<Slot>());
 
 	    for (int i = 0; i < 10; i++)
         {
@@ -33,13 +31,7 @@ public class InventoryManager : MonoBehaviour
 
     Vector2 GetFirstFreeSlot()
     {
-        foreach (List<Slot> listOfSlots in inventory)
-        {
-            foreach (Slot slot in listOfSlots)
-            {
-                return Vector2.zero;
-            }
-        }
+
         return Vector2.zero;
     }
 	
